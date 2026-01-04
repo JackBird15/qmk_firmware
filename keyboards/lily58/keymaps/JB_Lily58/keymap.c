@@ -1,108 +1,101 @@
 #include QMK_KEYBOARD_H
 
 enum layer_number {
-  _QWERTY = 0,
-  _LOWER,
-  _RAISE,
-  _ADJUST,
+  _BASE = 0,
+  _LCTRL,   // activated by RIGHT thumb → controls LEFT side
+  _RCTRL,   // activated by LEFT thumb → controls RIGHT side
 };
+
 
 enum custom_keycodes {
     NO_NOK = SAFE_RANGE, // Norwegian currency symbol
     KC_JIGG, // F15 keypress every 30 seconds when inactive
-    DE_LEFT, // Windows switch desktop left
-    DE_RIGHT, // Windows switch desktop right
+    KC_ALTUP,
+    KC_ALTDWN,
+    KC_ALTLEFT,
+    KC_ALTRIGHT,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-/* QWERTY
+ /* BASE
  * ,-----------------------------------------.                    ,-----------------------------------------.
- * | ESC  |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |  `   |
+ * | `    |  1   |  2   |  3   |  4   |  5   |                    |  6   |  7   |  8   |  9   |  0   | BSPC |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * | Tab  |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  |  -   |
+ * | TAB  |  Q   |  W   |  E   |  R   |  T   |                    |  Y   |  U   |  I   |  O   |  P   | DEL  |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |LCTRL |   A  |   S  |   D  |   F  |   G  |-------.    ,-------|   H  |   J  |   K  |   L  |   ;  |  '   |
- * |------+------+------+------+------+------|   [   |    |    ]  |------+------+------+------+------+------|
- * |LShift|   Z  |   X  |   C  |   V  |   B  |-------|    |-------|   N  |   M  |   ,  |   .  |   /  |RShift|
+ * | LSFT |  A   |  S   |  D   |  F   |  G   |-------.    ,-------|  H   |  J   |  K   |  L   |  ;   |  '   |
+ * |------+------+------+------+------+------|  [    |    |   ]   |------+------+------+------+------+------|
+ * | LCTL |  Z   |  X   |  C   |  V   |  B   |-------|    |-------|  N   |  M   |  ,   |  .   |  /   |  `   |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
- *                   | LAlt | LGUI |LOWER | /Space  /       \Enter \  |RAISE |BackSP| RGUI |
- *                   |      |      |      |/       /         \      \ |      |      |      |
- *                   `----------------------------'           '------''--------------------'
+ *                   | LALT | LGUI | RCTRL | / SPC   /       \ ENTER\  | LCTRL |  -   |  +   |
+ *                   |      |      |       |/       /         \      \ |       |      |      |
+ *                   `----------------------------'           '------------------------------'
  */
 
- [_QWERTY] = LAYOUT(
-  KC_ESC,   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_GRV,
-  KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_MINS,
-  KC_LCTL,  KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                     KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-  KC_LSFT,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, KC_LBRC,  KC_RBRC,  KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,  KC_RSFT,
-                        KC_LALT, KC_LGUI, MO(_LOWER), KC_SPC, KC_ENT, MO(_RAISE), KC_BSPC, KC_RGUI
+[_BASE] = LAYOUT(
+  KC_GRV,   KC_1,   KC_2,    KC_3,    KC_4,    KC_5,                     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,   KC_BSPC,
+  KC_TAB,   KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,   KC_DEL,
+  KC_LSFT,  KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                     KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,KC_QUOT,
+  KC_LCTL,  KC_Z,   KC_X,    KC_C,    KC_V,    KC_B, KC_LBRC,  KC_RBRC,  KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,KC_GRV,
+                         KC_LALT, KC_LGUI, MO(_RCTRL), KC_SPC,  KC_ENT, MO(_LCTRL), KC_MINS, KC_PLUS
 ),
-/* LOWER
- * ,-----------------------------------------.                    ,-----------------------------------------.
- * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
- * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |                    |  F7  |  F8  |  F9  | F10  | F11  | F12  |
- * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |   `  |   !  |   @  |   #  |   $  |   %  |-------.    ,-------|   ^  |   &  |   *  |   (  |   )  |   ~  |
- * |------+------+------+------+------+------|   [   |    |    ]  |------+------+------+------+------+------|
- * |      |      |      |      |      |      |-------|    |-------|      |   _  |   +  |   {  |   }  |   |  |
- * `-----------------------------------------/       /     \      \-----------------------------------------'
- *                   | LAlt | LGUI |LOWER | /Space  /       \Enter \  |RAISE |BackSP| RGUI |
- *                   |      |      |      |/       /         \      \ |      |      |      |
- *                   `----------------------------'           '------''--------------------'
- */
-[_LOWER] = LAYOUT(
-  _______, _______, _______, _______, _______, _______,                   _______, _______, _______,_______, _______, _______,
-  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                     KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
-  KC_GRV, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                   KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_TILD,
-  _______, _______, _______, _______, _______, _______, _______, _______, XXXXXXX, KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE,
-                             _______, _______, _______, _______, _______,  _______, _______, _______
-),
-/* RAISE
- * ,-----------------------------------------.                    ,-----------------------------------------.
- * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
- * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |   `  |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |      |
- * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |-------.    ,-------|      | Left | Down |  Up  |Right |      |
- * |------+------+------+------+------+------|   [   |    |    ]  |------+------+------+------+------+------|
- * |  F7  |  F8  |  F9  | F10  | F11  | F12  |-------|    |-------|   +  |   -  |   =  |   [  |   ]  |   \  |
- * `-----------------------------------------/       /     \      \-----------------------------------------'
- *                   | LAlt | LGUI |LOWER | /Space  /       \Enter \  |RAISE |BackSP| RGUI |
- *                   |      |      |      |/       /         \      \ |      |      |      |
- *                   `----------------------------'           '------''--------------------'
- */
 
-[_RAISE] = LAYOUT(
-  _______, _______, _______, _______, _______, _______,                     _______, _______, _______, _______, _______, _______,
-  KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                        KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
-  KC_F1,  KC_F2,    KC_F3,   KC_F4,   KC_F5,   KC_F6,                       XXXXXXX, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, XXXXXXX,
-  KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,   _______, _______,  KC_PLUS, KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS,
-                             _______, _______, _______,  _______, _______,  _______, _______, _______
-),
-/* ADJUST
+/* LCTRL (Right thumb)
  * ,-----------------------------------------.                    ,-----------------------------------------.
- * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
+ * | ESC  | F1   | F2   | F3   | F4   | F5   |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
+ * |      |      |  UP  |      |      |      |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      |      |      |      |      |      |-------.    ,-------|      |      |RGB ON| HUE+ | SAT+ | VAL+ |
+ * | CAPS | LEFT | DOWN | RGHT |      |      |-------.    ,-------|      |      |      |      |      |      |
  * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
- * |      |      |      |      |      |      |-------|    |-------|      |      | MODE | HUE- | SAT- | VAL- |
+ * |      |      |      |      |      |      |-------|    |-------|      |      |      |      |      |      |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
- *                   | LAlt | LGUI |LEFT  | /Space  /       \Enter \  |RIGHT |BackSP| RGUI |
- *                   |      |      |      |/       /         \      \ |      |      |      |
- *                   `----------------------------'           '------''--------------------'
+ *                   |      |      |       | /       /      \      \  |       |      |      |
+ *                   |      |      |       |/       /         \      \ |       |      |      |
+ *                   `----------------------------'           '------------------------------'
  */
-  [_ADJUST] = LAYOUT(
-  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-                             _______, _______, _______, _______, _______,  _______, _______, _______
-  )
-};
+
+/* =========================
+ * LEFT CONTROL
+ * (RIGHT thumb held → LEFT side only)
+ * ========================= */
+[_LCTRL] = LAYOUT(
+  KC_ESC,   KC_F1,  KC_F2,   KC_F3,   KC_F4,   KC_F5,                    _______, _______, _______, _______, _______, _______,
+  _______,  _______, KC_UP,  _______, _______, _______,                 _______, _______, _______, _______, _______, _______,
+  KC_CAPS,  KC_LEFT,KC_DOWN, KC_RGHT, _______, _______,                 _______, _______, _______, _______, _______, _______,
+  _______,  _______,_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+                         _______, _______, _______, _______, _______, _______, _______, _______
+),
+
+/* RCTRL (Left thumb) 
+ * ,-----------------------------------------.                    ,-----------------------------------------.
+ * |      |      |      |      |      |      |                    |  F6   |  F7  |   F8 |   F9 |  F10  |      |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * |      |      |      |      |      |      |                    |      |      |ALT+UP|      |      |      |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * |      |      |      |      |      |      |-------.    ,-------|      |ALT+<-|ALT+DN|ALT+->|      |     |
+ * |------+------+------+------+------+------|       |    |       |------+------+------+------+------+------|
+ * |      |      |      |      |      |      |-------|    |-------|      |      |      |      |      |  \   |
+ * `-----------------------------------------/       /     \      \-----------------------------------------'
+ *                   |      |      |       | /       /       \      \  |       |      |      |
+ *                   |      |      |       |/       /         \      \ |       |      |      |
+ *                   `----------------------------'           '------------------------------'
+ */
+ 
+ /* =========================
+ * RIGHT CONTROL
+ * (LEFT thumb held → RIGHT side only)
+ * ========================= */
+[_RCTRL] = LAYOUT(
+  _______, _______, _______, _______, _______, _______,                   KC_F6,   KC_F7,   KC_F8    ,  KC_F9,   KC_F10,    KC_F11,
+  _______, _______, _______, _______, _______, _______,                   _______, _______, KC_ALTUP,   _______, _______, _______,
+  _______, _______, _______, _______, _______, _______,                   _______, KC_ALTLEFT, KC_ALTDWN, KC_ALTRIGHT, _______, _______,
+  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_BSLS,
+                         _______, _______, _______, _______, _______, _______, _______, _______
+)};
+
+
 
 #ifdef OLED_ENABLE
 
@@ -168,6 +161,8 @@ uint32_t anim_timer = 0;
 
 /* current frame */
 uint8_t current_frame = 0;
+
+static bool can_show_screen=false;
 
 /* status variables */
 int   current_wpm = 0;
@@ -262,6 +257,7 @@ static void render_digimon(int MON_X, int MON_Y)
         animate_mon(MON_X, MON_Y);
     } else if (last_input_activity_elapsed() > OLED_TIMEOUT && last_led_activity_elapsed() > OLED_TIMEOUT) {
         oled_off();
+        can_show_screen=false;
     }
 }
 
@@ -359,6 +355,7 @@ bool process_record_oled(uint16_t keycode, keyrecord_t *record) { return true; }
 bool is_jiggling = false;
 
 static uint16_t last_keycode = KC_NO;
+static uint16_t last_oled_keycode = KC_NO;
 
 /*timers*/
 uint32_t idle_timeout = 30000; // (after 30s)
@@ -374,32 +371,12 @@ static uint32_t idle_callback(uint32_t trigger_time, void* cb_arg) {
  
 }
 
-
 /*Dynamic macro hooks to display on oled */
 
 int8_t cached_direction;
 int8_t stop_direction;
 bool is_recording_1 = false;
 bool is_recording_2 = false;
-
-// void dynamic_macro_record_start_user(int8_t direction) {
-//     cached_direction = direction;
-//     if (cached_direction == 1){
-//         is_recording_1 = true;
-//     } else if (cached_direction == -1){
-//         is_recording_2 = true;
-//     }
-// }
-
-// void dynamic_macro_record_end_user(int8_t direction) {
-//     stop_direction = direction;
-//     if (stop_direction == 1){
-//         is_recording_1 = false;
-//     } else if (stop_direction == -1){
-//         is_recording_2 = false;
-//     }
-// }
-
 
 static void print_logo_narrow(void) {
     render_logo();
@@ -421,6 +398,10 @@ static void print_logo_narrow(void) {
 
 static void print_status_narrow(void) {
     /* Print current mode */
+    if(!can_show_screen)
+    {
+        return;
+    }
 
    oled_set_cursor(0, 0);
 
@@ -428,14 +409,14 @@ static void print_status_narrow(void) {
     oled_write_P(PSTR("Layer:\n "), false);
 
     switch (get_highest_layer(layer_state)) {
-        case _QWERTY:
-            oled_write_P(PSTR("Default\n"), false);
+        case _BASE:
+            oled_write_P(PSTR("BASE\n"), false);
             break;
-        case _LOWER:
-            oled_write_P(PSTR("LOWER\n"), false);
+        case _LCTRL:
+            oled_write_P(PSTR("LCTRL\n"), false);
             break;
-        case   _RAISE:
-            oled_write_P(PSTR("RAISE\n"), false);
+        case   _RCTRL:
+            oled_write_P(PSTR("RCTRL\n"), false);
             break;
        default:
             // Or use the write_ln shortcut over adding '\n' to the end of your string
@@ -453,9 +434,7 @@ static void print_status_narrow(void) {
     oled_write_P(led_state.num_lock ? PSTR("NUM ") : PSTR("    "), false);
     oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
 
-
     /*Dynamic macros */
-
     oled_set_cursor(0, 5);
     if (cached_direction == 0) {
         oled_write_P(PSTR("    "), false);
@@ -476,7 +455,6 @@ static void print_status_narrow(void) {
 
 
     /*jiggler*/
-
     oled_set_cursor(0, 7);
     switch (is_jiggling) {
         case true:
@@ -614,11 +592,28 @@ static const char *keycode_to_str(uint16_t keycode) {
     }
 }
 
+#define KEY_STR_MAX 18
+
 static void render_last_key(void) {
-    oled_set_cursor(0, 5);
-    oled_write_P(PSTR("Key:"), false);
-    oled_set_cursor(0, 6);
-    oled_write(keycode_to_str(last_keycode), false);
+    if (!can_show_screen) {
+        return;
+    }
+
+    if (last_keycode == last_oled_keycode) {
+        return;
+    }
+
+    last_oled_keycode = last_keycode;
+
+    char buf[32];
+    snprintf(
+        buf,
+        sizeof(buf),
+        "Keys:%-18.18s",
+        keycode_to_str(last_keycode)
+    ); 
+    oled_set_cursor(0, 6a);
+    oled_write(buf, false);
 }
 
 bool oled_task_user(void) {
@@ -628,15 +623,12 @@ bool oled_task_user(void) {
     led_usb_state = host_keyboard_led_state();
 
     /* KEYBOARD PET VARIABLES END */
-
+   
     if (is_keyboard_master()) {
         print_status_narrow();
+        render_last_key();
     } else {
         print_logo_narrow();
-    }
-
-    if (is_keyboard_master()) {
-        render_last_key();
     }
 
     return false;
@@ -644,19 +636,11 @@ bool oled_task_user(void) {
 
 #endif
 
-
-
-
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-
-    if (record->event.pressed) 
-    {
-        amountWordsTyped++;
-    }
-
     if (record->event.pressed) {
-    last_keycode = keycode;
+        can_show_screen=true;
+        amountWordsTyped++;
+        last_keycode = keycode;
     }
 
 // on every key event start or extend `idle_callback()` deferred execution after IDLE_TIMEOUT_MS
@@ -667,34 +651,53 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
   
-  switch (keycode) {
-      case NO_NOK:
+    switch (keycode) {
+        case NO_NOK:
             if (record->event.pressed) {
                 SEND_STRING("," SS_TAP(X_SLSH));
             }
 
             break;
      
-      case KC_JIGG:
+        case KC_JIGG:
             if (record->event.pressed) {
                     is_jiggling = !is_jiggling; /* flip boolean to true */
             }
 
+            break;  
+
+        case KC_ALTUP:
+            if (record->event.pressed) {
+                // Press Alt + Up
+                register_code(KC_LALT);
+                tap_code(KC_UP);
+                unregister_code(KC_LALT);
+            }
             break;
 
-    case DE_LEFT:
+        case KC_ALTDWN:
             if (record->event.pressed) {
-                SEND_STRING(SS_LGUI(SS_LCTL(SS_TAP(X_LEFT))));
+                register_code(KC_LALT);
+                tap_code(KC_DOWN);
+                unregister_code(KC_LALT);
             }
-
             break;
 
-    case DE_RIGHT:
+        case KC_ALTLEFT:
             if (record->event.pressed) {
-                SEND_STRING(SS_LGUI(SS_LCTL(SS_TAP(X_RIGHT))));
+                register_code(KC_LALT);
+                tap_code(KC_LEFT);
+                unregister_code(KC_LALT);
             }
+            break;
 
-            break;   
+        case KC_ALTRIGHT:
+            if (record->event.pressed) {
+                register_code(KC_LALT);
+                tap_code(KC_RIGHT);
+                unregister_code(KC_LALT);
+            }
+            break;
     }
     
     return process_record_keymap(keycode, record) && process_record_secrets(keycode, record)
